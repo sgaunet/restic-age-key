@@ -1,3 +1,14 @@
+[![GitHub release](https://img.shields.io/github/release/sgaunet/restic-age-key.svg)](https://github.com/sgaunet/restic-age-key/releases/latest)
+![GitHub Downloads](https://img.shields.io/github/downloads/sgaunet/restic-age-key/total)
+[![Go Report Card](https://goreportcard.com/badge/github.com/sgaunet/restic-age-key)](https://goreportcard.com/report/github.com/sgaunet/restic-age-key)
+![Test Coverage](https://raw.githubusercontent.com/wiki/sgaunet/restic-age-key/coverage-badge.svg)
+[![linter](https://github.com/sgaunet/restic-age-key/actions/workflows/linter.yml/badge.svg)](https://github.com/sgaunet/restic-age-key/actions/workflows/linter.yml)
+[![coverage](https://github.com/sgaunet/restic-age-key/actions/workflows/coverage.yml/badge.svg)](https://github.com/sgaunet/restic-age-key/actions/workflows/coverage.yml)
+[![Snapshot Build](https://github.com/sgaunet/restic-age-key/actions/workflows/snapshot.yml/badge.svg)](https://github.com/sgaunet/restic-age-key/actions/workflows/snapshot.yml)
+[![Release Build](https://github.com/sgaunet/restic-age-key/actions/workflows/release.yml/badge.svg)](https://github.com/sgaunet/restic-age-key/actions/workflows/release.yml)
+[![GoDoc](https://godoc.org/github.com/sgaunet/restic-age-key?status.svg)](https://godoc.org/github.com/sgaunet/restic-age-key)
+[![License](https://img.shields.io/github/license/sgaunet/restic-age-key.svg)](LICENSE)
+
 # restic-age-key
 
 Use asymmetric [age](https://age-encryption.org/) keys instead of a password on your [restic](https://restic.net) repository.
