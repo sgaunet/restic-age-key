@@ -39,7 +39,9 @@ import (
 var (
 	AgeProgram    = "age"
 	RcloneProgram = "rclone"
-	Version       = "1.1.1"
+	Version       = "dev"
+	Commit        = ""
+	Date          = ""
 )
 
 type options struct {
@@ -121,6 +123,15 @@ It supports listing existing keys, adding new keys, and retrieving passwords.`,
 		SilenceUsage:  true,
 		Version:       Version,
 	}
+
+	versionTmpl := "{{.Name}} version {{.Version}}"
+	if Commit != "" {
+		versionTmpl += "\ncommit: " + Commit
+	}
+	if Date != "" {
+		versionTmpl += "\nbuilt:  " + Date
+	}
+	cmd.SetVersionTemplate(versionTmpl + "\n")
 
 	cmd.PersistentFlags().StringVar(&options.ageProgram, "age-program", options.ageProgram, "path to age binary")
 	cmd.PersistentFlags().StringVar(&options.rcloneProgram, "rclone-program", options.rcloneProgram, "path to rclone")
