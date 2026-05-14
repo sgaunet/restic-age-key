@@ -105,7 +105,7 @@ jobs:
           # Uncomment if using GoReleaser Pro
           # GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
           # Uncomment if publishing to Homebrew tap
-          # HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
 
       # Optional: Create GitHub release notes summary
       # - name: Generate release notes
