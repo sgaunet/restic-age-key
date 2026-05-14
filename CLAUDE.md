@@ -15,7 +15,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```sh
 go build ./...                          # build the binary
 go test ./...                           # run all tests (needs `age` and `restic` on PATH)
-go test -run TestScript/add-flags .     # run a single testscript scenario (matches testdata/add-flags.txtar)
+go test -run TestScript/add-flags ./cmd/restic-age-key/   # run a single testscript scenario (matches cmd/restic-age-key/testdata/add-flags.txtar)
 UPDATE_SCRIPTS=true go test ./...       # rewrite expected output blocks inside .txtar files in place
 go vet ./... && golangci-lint run ./... # static checks
 ```

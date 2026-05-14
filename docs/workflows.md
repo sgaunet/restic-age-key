@@ -22,7 +22,7 @@ The test layout is unusual and worth understanding before editing:
 - `cmd/restic-age-key/main_test.go` — wires `testscript.Main` so the binary built from this package is callable as `restic-age-key` inside scripts, then runs `testscript.Run` over `testdata/`.
 - `testdata/*.txtar` — one scenario per file, shell-like script. `exec restic-age-key ...`, `exec restic ...`, and `exec age ...` all run real binaries. Trailing `-- filename --` blocks become files in `$WORK`. `cmp stderr expected.txt` asserts exact output.
 - No unit tests exist in the conventional sense — all behavior is exercised end-to-end through the CLI. This is deliberate: the value of this tool is its interop with `restic` and `age`, both of which are real subprocesses in the tests.
-- Run a single scenario: `go test -run TestScript/add-flags ./cmd/restic-age-key/` (the suffix matches the `.txtar` filename minus extension).
+- Run a single scenario: `go test -run TestScript/add-flags ./cmd/restic-age-key/` (the suffix matches the `.txtar` filename minus extension; testdata lives at `cmd/restic-age-key/testdata/`).
 
 ## Release Process
 
