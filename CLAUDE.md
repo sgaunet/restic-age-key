@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Operating Guidelines
+
+**Read `docs/operating-guidelines.md` at the start of every session.** It defines how to plan, verify, and iterate in this repository: plan mode, subagent strategy, verification gates, self-improvement loop, and the communication contract. Treat it as load-bearing context.
+
 ## What this is
 
 `restic-age-key` is a Go CLI that lets you unlock a [restic](https://restic.net) repository with an asymmetric [age](https://age-encryption.org/) key instead of a symmetric password. Subcommands: `list`, `add`, `set`, `password`, `from-password`, `repo-init`. See `README.md` for user-facing usage; `AGENTS.md` covers the standard Go build/test/lint commands.
@@ -46,3 +50,10 @@ Everything lives in `cmd/restic-age-key/main.go` (~1200 lines, one file by desig
 - `//nolint:staticcheck` on the `Fatal:` error strings is deliberate — those messages mirror restic's CLI wording for users who grep error output. Don't reformat them.
 - `errors.New`/`fmt.Errorf` with capitalized `Fatal:` prefix is the user-facing error style; lowercase wrapped errors are for internal wrapping.
 - New subcommands should follow the existing pattern: top-level `runKeyX` function taking `(ctx, opts, args)`, with a `cobra.Command` that applies `options.timeout` via `context.WithTimeout` when non-zero.
+
+## Documentation
+
+- `docs/operating-guidelines.md` — workflow, verification, self-improvement rules (load-bearing, read every session).
+- `docs/architecture.md` — system design and component overview.
+- `docs/workflows.md` — feature development, CI, testing strategy.
+- `docs/patterns.md` — code patterns specific to this project.
