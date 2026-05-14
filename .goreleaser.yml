@@ -27,13 +27,10 @@ builds:
     dir: cmd/restic-age-key
 
     # Inject version information at build time
-    # CUSTOMIZE: Adjust variable name if your main package uses different variable
     ldflags:
-      - -X main.version={{.Version}}
-      # Optional: Add more build info
-      # - -X main.commit={{.Commit}}
-      # - -X main.date={{.Date}}
-      # - -s -w  # Strip debug info for smaller binaries
+      - -X main.Version={{.Version}}
+      - -X main.Commit={{.Commit}}
+      - -X main.Date={{.Date}}
 
     # Target operating systems
     # Options: linux, darwin (macOS), windows, freebsd, openbsd, netbsd
