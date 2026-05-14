@@ -61,7 +61,7 @@ jobs:
       # Enables building ARM images on x86_64 runners
       # Required for: linux/arm64, linux/arm/v7, linux/arm/v6
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       # Setup Docker Buildx for advanced build features
       # Required for multi-platform Docker images
