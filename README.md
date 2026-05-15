@@ -94,4 +94,4 @@ cat /tmp/restic-repo/keys/123abc | \
 
 ## Credits
 
-The original source code for this project has been retrieved from [https://github.com/sgaunet/restic-age-key](https://github.com/sgaunet/restic-age-key).
+The original source code for this project has been retrieved from [https://github.com/josh/restic-age-key](https://github.com/josh/restic-age-key).
