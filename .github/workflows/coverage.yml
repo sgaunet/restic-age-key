@@ -22,6 +22,10 @@ jobs:
       - uses: actions/checkout@v7
 
       # Install age — testscript scenarios shell out to the real binary
+      - uses: jdx/mise-action@v4
+        with:
+          install: true
+          cache: true
       - name: Install age
         run: |
           set -o xtrace
@@ -39,15 +43,7 @@ jobs:
           chmod +x restic_${RESTIC_VERSION}_linux_amd64
           sudo mv restic_${RESTIC_VERSION}_linux_amd64 /usr/local/bin/restic
 
-      # Setup Go environment
-      # Uses Go version from go.mod for consistency
-      - name: Set up Go
-        uses: actions/setup-go@v7.0.0
-        with:
-          go-version-file: 'go.mod'
-
-      # Run tests with coverage
-      # CUSTOMIZE: Adjust coverage commands for your project structure
+      # Toolchain (Go, task, golangci-lint, ...) is pinned in mise.toml
       - name: coverage
         id: coverage
         run: |

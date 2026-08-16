@@ -27,33 +27,11 @@ jobs:
         with:
           fetch-depth: 0  # Required for GoReleaser changelog
 
-      # Setup Go environment
-      # Uses Go version from go.mod for consistency
-      - name: Install Go
-        uses: actions/setup-go@v7.0.0
+      # Toolchain (Go, task, golangci-lint, ...) is pinned in mise.toml
+      - uses: jdx/mise-action@v4
         with:
-          go-version-file: 'go.mod'
-
-      # Install Task runner
-      # Task provides consistent build commands across local and CI
-      - name: Install task
-        uses: jaxxstorm/action-install-gh-release@v3.0.0
-        with:
-          repo: go-task/task
-          cache: true  # Cache for faster builds
-          # tag: v3.39.0  # Optionally pin specific version
-
-      # Install GoReleaser
-      # CUSTOMIZE: Pin to specific version if needed
-      - name: Install goreleaser
-        uses: jaxxstorm/action-install-gh-release@v3.0.0
-        with:
-          repo: goreleaser/goreleaser
+          install: true
           cache: true
-          # tag: v2.5.0  # Optionally pin specific version
-
-      # Setup QEMU for multi-platform Docker builds
-      # Enables building ARM images on x86 runners
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4.2.0
 

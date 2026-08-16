@@ -23,34 +23,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # Setup Go environment
-      # Uses Go version from go.mod for consistency
-      - uses: actions/setup-go@v7.0.0
+      # Toolchain (Go, task, golangci-lint, ...) is pinned in mise.toml
+      - uses: jdx/mise-action@v4
         with:
-          go-version-file: 'go.mod'
-
-      # Install Task runner
-      # Task provides consistent build commands across local and CI
-      - name: Install task
-        uses: jaxxstorm/action-install-gh-release@v3.0.0
-        with:
-          repo: go-task/task
-          cache: enable  # Cache binary for faster subsequent runs
-          # tag: v3.39.0  # Optionally pin specific version
-
-      # Install golangci-lint
-      # CUSTOMIZE: Update version as needed
-      - name: Install golangci-lint
-        uses: jaxxstorm/action-install-gh-release@v3.0.0
-        with:
-          repo: golangci/golangci-lint
-          tag: v2.12.2  # CUSTOMIZE: Use latest or pin to specific version
-          cache: enable
-          binaries-location: golangci-lint-2.12.2-linux-amd64
-
-      # Run linter via Task
-      # Requires: Taskfile.yml with 'lint' task defined
-      # Example task: golangci-lint run --timeout=5m ./...
+          install: true
+          cache: true
       - name: Run linter
         shell: /usr/bin/bash {0}
         run: |
