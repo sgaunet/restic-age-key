@@ -69,4 +69,4 @@ New subcommands should reuse this pattern verbatim.
 - **Single package, single file** at `cmd/restic-age-key/main.go`. Resist the urge to split early; the file is large but coherent.
 - **No interfaces for backends** — they come from `github.com/josh/restic-api` and we use them directly.
 - **Comments only when non-obvious.** Per `AGENTS.md`: clarify *why*, not *what*.
-- Go version is pinned to `1.25.5` in both `go.mod` and `.github/workflows/go.yml`. Bumping requires updating both.
+- The toolchain (Go, task, golangci-lint, goreleaser) is pinned in `mise.toml`; every CI job installs it via `jdx/mise-action`, so the workflows carry no Go version of their own. `go.mod` has its own `go` directive — keep it ≤ the mise-pinned Go.

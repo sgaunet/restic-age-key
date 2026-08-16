@@ -31,5 +31,6 @@ No automated release pipeline yet. CI (`go.yml`) builds and tests on every push 
 - age `1.2.1` × restic `0.18.0` (nixos-25.05)
 - age `1.2.1` × restic `0.18.1` (nixos-25.11)
 - age `1.3.1` × restic `0.18.1` (nixpkgs-unstable)
+- age `1.3.1` × restic `0.19.1` (matches the restic-api version in `go.mod`)
 
-When changing behavior that touches the `age` CLI surface or restic on-disk format, sanity-check across that matrix. The Go version is pinned to `1.25.5` in both `go.mod` and CI.
+When changing behavior that touches the `age` CLI surface or restic on-disk format, sanity-check across that matrix. The toolchain is pinned once in `mise.toml` and installed by `jdx/mise-action`, so no workflow hardcodes a Go version.
