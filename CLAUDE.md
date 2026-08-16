@@ -14,7 +14,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```sh
 go build ./...                          # build the binary
-go test ./...                           # run all tests (needs `age` and `restic` on PATH)
+go test ./...                           # run all tests (needs `age`, `restic` and `jq` on PATH)
 go test -run TestScript/add-flags ./cmd/restic-age-key/   # run a single testscript scenario (matches cmd/restic-age-key/testdata/add-flags.txtar)
 UPDATE_SCRIPTS=true go test ./...       # rewrite expected output blocks inside .txtar files in place
 go vet ./... && golangci-lint run ./... # static checks
@@ -31,7 +31,8 @@ The CI matrix (`.github/workflows/go.yml`) runs against multiple `age` (1.2.1, 1
 Tests are not normal Go tests. `main_test.go` wires `testscript.Main` to call this binary's `main()`, then `TestScript` discovers every `testdata/*.txtar` file and runs each as a shell-like script. Inside a `.txtar`:
 
 - `exec restic-age-key ...` invokes the binary built from this package (no recompile needed).
-- `exec restic ...` and `exec age ...` shell out to the real binaries — both must be installed.
+- `exec restic ...` and `exec age ...` shell out to the real binaries — both must be installed. Some scripts also pipe `restic ... --json` through `jq`.
+- `main_test.go`'s `setupEnv` hands the real `$HOME` back to each script (testscript pins it to `/no-home`, which breaks mise/asdf shims) and redirects `RESTIC_CACHE_DIR` into `$WORK`. Don't drop the cache redirect — without it the tests would read and write the developer's real restic cache.
 - Trailing `-- filename --` blocks are virtual files materialized into `$WORK` before the script runs.
 - `cmp stderr file.txt` / `stdout pattern` / `! stderr .` assert exact output. Use `UPDATE_SCRIPTS=true` to regenerate the `-- expected.txt --` blocks rather than hand-editing them after a behavior change.
 
