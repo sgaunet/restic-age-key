@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-`restic-age-key` is a Go CLI that lets you unlock a [restic](https://restic.net) repository with an asymmetric [age](https://age-encryption.org/) key instead of a symmetric password. Subcommands: `list`, `add`, `set`, `password`, `from-password`, `repo-init`. See `README.md` for user-facing usage; `AGENTS.md` covers the standard Go build/test/lint commands.
+`restic-age-key` is a Go CLI that lets you unlock a [restic](https://restic.net) repository with an asymmetric [age](https://age-encryption.org/) key instead of a symmetric password. Subcommands: `list`, `add`, `set`, `password`, `from-password`, `repo-init`. See `README.md` for user-facing usage.
 
 ## Common commands
 
@@ -20,7 +20,11 @@ UPDATE_SCRIPTS=true go test ./...       # rewrite expected output blocks inside 
 go vet ./... && golangci-lint run ./... # static checks
 ```
 
-The CI matrix (`.github/workflows/go.yml`) pins Go 1.25.5 and runs against multiple `age` (1.2.1, 1.3.1) and `restic` (0.18.0, 0.18.1) versions — when changing behavior that interacts with either binary, sanity-check it works across that range.
+`Taskfile.yml` is the canonical wrapper the hooks and CI use: `task test` (`go test -count=2 -race ./...`), `task lint`, `task build`, `task snapshot` (goreleaser), and `task check-before-commit` (test + snapshot + lint). The pre-commit hook runs test/lint/snapshot, so `goreleaser` must work locally before a commit lands.
+
+Toolchain versions are pinned in `mise.toml` (Go, task, golangci-lint, goreleaser) and every CI job installs them via `jdx/mise-action` — bump the toolchain there, not in the workflow files. Note `go.mod` carries its own `go` directive; keep it ≤ the mise-pinned Go.
+
+The CI matrix (`.github/workflows/go.yml`) runs against multiple `age` (1.2.1, 1.3.1) and `restic` (0.18.0, 0.18.1) versions — when changing behavior that interacts with either binary, sanity-check it works across that range.
 
 ## Testing model — read this before editing tests
 
@@ -35,15 +39,16 @@ When adding a feature, the convention is one `.txtar` per scenario (happy path, 
 
 ## Architecture
 
-Everything lives in `cmd/restic-age-key/main.go` (~1200 lines, one file by design). The shape:
+Everything lives in `cmd/restic-age-key/main.go` (~1250 lines, one file by design). The shape:
 
 1. **`newRootCommand`** wires cobra subcommands and seeds `options{}` from `RESTIC_*` and `RESTIC_AGE_*` env vars before flag parsing. The env-var defaults are intentional — many flows are driven entirely by environment (e.g. `RESTIC_PASSWORD_COMMAND='restic-age-key password'`), so do not introduce flag requirements that would break the env-only path.
 2. **Backend resolution** goes through `collectBackends()` → `location.Parse` → factory `Open`/`Create`. Adding a new restic backend means registering it there.
 3. **`AgeKey` struct** is the on-disk JSON for each key file in `<repo>/keys/<id>`. It is a standard restic scrypt keyfile (`KDF`, `N`, `R`, `P`, `Salt`, `Data` encrypts the master key) *plus* two extra fields, `AgePubkey` and `AgeData`, holding an age-encrypted random 32-byte password. The same random password is hex-encoded and fed through scrypt to derive the user key that wraps the master key. This is why a recovery path using only `age` + `xxd` works (see README).
-4. **`password` flow**: `readPasswordViaIdentity` lists every key file, tries to age-decrypt each `AgeData` blob with the identity, and returns the first one that succeeds — silently skipping `no identity matched any of the recipients` errors. Don't tighten that error handling without thinking about multi-recipient repos.
-5. **`add` / `repo-init` flow**: `buildAndSaveAgeKey` calibrates fresh scrypt params (`crypto.Calibrate(500ms, 60)`) for every new key, so two keys for the same repo will have different N/r/p — that's intentional.
-6. **`set` flow**: diffs the JSON recipients file against the keys present in the repo, adds missing ones, removes extras. Explicitly refuses to remove the key currently used to open the repo.
-7. **`identityCommand`** writes its output to a temp file and rewrites `opts.identityFile` to point at it; the returned `closeCallback` cleans it up. Always `defer closeIdentityCommand()` when calling `readIdentityCommand`.
+4. **`from-password`** is not a separate flow — its `RunE` assigns `opts.repo = opts.fromRepo` (from `RESTIC_FROM_REPOSITORY`) and then calls `runKeyPassword`. Anything added to the `password` flow lands there too.
+5. **`password` flow**: `readPasswordViaIdentity` lists every key file, tries to age-decrypt each `AgeData` blob with the identity, and returns the first one that succeeds — silently skipping `no identity matched any of the recipients` errors. Don't tighten that error handling without thinking about multi-recipient repos.
+6. **`add` / `repo-init` flow**: `buildAndSaveAgeKey` calibrates fresh scrypt params (`crypto.Calibrate(500ms, 60)`) for every new key, so two keys for the same repo will have different N/r/p — that's intentional.
+7. **`set` flow**: diffs the JSON recipients file against the keys present in the repo, adds missing ones, removes extras. Explicitly refuses to remove the key currently used to open the repo.
+8. **`identityCommand`** writes its output to a temp file and rewrites `opts.identityFile` to point at it; the returned `closeCallback` cleans it up. Always `defer closeIdentityCommand()` when calling `readIdentityCommand`.
 
 ## Conventions worth keeping
 
