@@ -24,6 +24,10 @@ jobs:
           - age_version: "1.3.1"
             restic_version: "0.18.1"
 
+          # matches the restic-api version vendored in go.mod
+          - age_version: "1.3.1"
+            restic_version: "0.19.1"
+
     env:
       AGE_VERSION: "${{ matrix.age_version }}"
       RESTIC_VERSION: "${{ matrix.restic_version }}"

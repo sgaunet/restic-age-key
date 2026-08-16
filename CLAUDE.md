@@ -24,7 +24,7 @@ go vet ./... && golangci-lint run ./... # static checks
 
 Toolchain versions are pinned in `mise.toml` (Go, task, golangci-lint, goreleaser) and every CI job installs them via `jdx/mise-action` — bump the toolchain there, not in the workflow files. Note `go.mod` carries its own `go` directive; keep it ≤ the mise-pinned Go.
 
-The CI matrix (`.github/workflows/go.yml`) runs against multiple `age` (1.2.1, 1.3.1) and `restic` (0.18.0, 0.18.1) versions — when changing behavior that interacts with either binary, sanity-check it works across that range.
+The CI matrix (`.github/workflows/go.yml`) runs against multiple `age` (1.2.1, 1.3.1) and `restic` (0.18.0, 0.18.1, 0.19.1) versions — when changing behavior that interacts with either binary, sanity-check it works across that range. restic's own output is *not* byte-stable across that range (0.18.x ends `Fatal:` messages with a blank line, 0.19.x does not), so assert restic's output with a regex `stderr '...'` match and save `cmp` for restic-age-key's own output.
 
 ## Testing model — read this before editing tests
 
