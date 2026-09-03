@@ -45,7 +45,7 @@ jobs:
       # Setup Docker Buildx for advanced build features
       # Required for multi-platform Docker images
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4.2.0
+        uses: docker/setup-buildx-action@v4.3.0
 
       # Login to GitHub Container Registry
       # Automatically uses GITHUB_TOKEN for authentication
