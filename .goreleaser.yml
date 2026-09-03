@@ -196,51 +196,45 @@ changelog:
 #       - ghcr.io/sgaunet/{{ .ProjectName }}:latest-armv6
 #       - ghcr.io/sgaunet/{{ .ProjectName }}:latest-armv7
 
-# Homebrew formula publishing (macOS package manager)
-# OPTIONAL: Remove this section if not publishing to Homebrew
-brews:
-  - # Project homepage
-    # CUSTOMIZE: Replace with your GitHub/GitLab URL
+# Homebrew cask publishing (replaces the deprecated `brews:` block; casks are
+# what GoReleaser supports going forward)
+homebrew_casks:
+  - name: restic-age-key
     homepage: 'https://github.com/sgaunet/restic-age-key'
+    description: 'Unlock restic repositories with asymmetric age keys instead of a password'
 
-    # Project description
-    # CUSTOMIZE: Add meaningful description
-    description: 'A tool for [describe your project]'
+    # Tap repository directory (casks live in Casks/, not Formula/)
+    directory: Casks
 
-    # Tap repository directory
-    directory: Formula
+    # Command name users invoke, mapped from the artifact name.
+    binaries:
+      - restic-age-key
 
-    # Commit author for tap updates
-    # CUSTOMIZE: Replace with your GitHub info
+    # age is required at runtime.
+    dependencies:
+      - formula: age
+
+    # Download URL of the release artifact.
+    url:
+      template: 'https://github.com/sgaunet/restic-age-key/releases/download/{{ .Tag }}/{{ .ArtifactName }}'
+
+    # Strip the Gatekeeper quarantine xattr so the installed binary can run.
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}"]
+          end
+
     commit_author:
       name: Sylvain
       email: 1552102+sgaunet@users.noreply.github.com
 
-    # Homebrew tap repository
-    # CUSTOMIZE: Create a homebrew-tools (or homebrew-tap) repository
     repository:
       owner: sgaunet
       name: homebrew-tools
-      # Required: Personal Access Token with 'repo' scope
-      # Set HOMEBREW_TAP_TOKEN in CI/CD secrets
+      # Token with 'repo' scope is required for pushing to a different repository
       token: '{{ .Env.HOMEBREW_TAP_TOKEN }}'
-
-    # Download URL template for binaries
-    # CUSTOMIZE: Update URL to match your repository
-    url_template: 'https://github.com/sgaunet/restic-age-key/releases/download/{{ .Tag }}/{{ .ArtifactName }}'
-
-    # Installation script
-    install: |
-      bin.install "{{ .ArtifactName }}" => "restic-age-key"
-
-    # Test script (validates installation)
-    test: |
-      system "#{bin}/restic-age-key", "--help"
-
-    # Optional: Add dependencies
-    # dependencies:
-    #   - name: git
-    #   - name: docker
 
 # Optional: Snapcraft (Linux Snap packages)
 # Uncomment to publish to Snap Store
