@@ -984,8 +984,7 @@ func ageEncryptRandomKey(ctx context.Context, ageProgram string, pubkey string) 
 			return "", nil, errAgeEncryptTimeout
 		}
 
-		var exitErr *exec.ExitError
-		if errors.As(err, &exitErr) {
+		if exitErr, ok := errors.AsType[*exec.ExitError](err); ok {
 			return "", nil, errors.New(string(exitErr.Stderr)) //nolint:err113 // surfaces age's stderr verbatim to the user.
 		}
 
@@ -1005,8 +1004,7 @@ func ageDecryptKey(ctx context.Context, ageProgram string, identityFile string, 
 			return "", errAgeDecryptTimeout
 		}
 
-		var exitErr *exec.ExitError
-		if errors.As(err, &exitErr) {
+		if exitErr, ok := errors.AsType[*exec.ExitError](err); ok {
 			return "", errors.New(string(exitErr.Stderr)) //nolint:err113 // surfaces age's stderr verbatim to the user.
 		}
 

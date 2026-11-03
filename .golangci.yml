@@ -75,6 +75,7 @@ linters:
     # Disabled: Too verbose, zero values are a Go feature
     # Re-enable for critical structs where all fields must be explicit
     - exhaustruct
+    - exhaustruct_v5
 
     # noinlineerr: Disallows inline error creation
     # Disabled: Forces error variables for simple cases
@@ -93,6 +94,10 @@ linters:
     #           - pkg: "github.com/sirupsen/logrus"
     #             desc: Use structured logging instead
     - depguard
+
+    # gomodguard: deprecated since golangci-lint v2.12.0, superseded by
+    # gomodguard_v2 (still enabled via `default: all`)
+    - gomodguard
 
     # tagliatelle: Struct tag naming convention
     # Disabled: Tag format depends on API requirements (camelCase vs snake_case)
